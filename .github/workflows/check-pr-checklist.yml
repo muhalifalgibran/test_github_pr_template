@@ -1,30 +1,33 @@
-name: Check PR Checklist
+name: Check Specific Checklist
 
 on:
   pull_request:
     types: [opened, edited, synchronize]
 
 jobs:
-  check-checklist:
+  verify-checklist:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Verify Checklist
+    - name: Verify Specific Checklist
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "Fetching Pull Request Information..."
         PR_BODY=$(gh pr view ${{ github.event.pull_request.number }} --json body -q '.body')
-        
-        echo "Checking Checklist in PR..."
-        MISSING=$(echo "$PR_BODY" | grep -o '\[ \]' | wc -l)
+
+        echo "Extracting Required Checklist..."
+        REQUIRED_CHECKLIST=$(echo "$PR_BODY" | sed -n '/### Required Checklist/,/### Optional Checklist/p')
+
+        echo "Checking Required Tasks..."
+        MISSING=$(echo "$REQUIRED_CHECKLIST" | grep -o '\- \[ \]' | wc -l)
 
         if [ "$MISSING" -gt 0 ]; then
-          echo "Error: $MISSING checklist item(s) are not checked. Please complete the checklist."
+          echo "Error: $MISSING required task(s) are not checked. Please complete the required checklist."
           exit 1
         else
-          echo "All checklist items are checked."
+          echo "All required tasks are checked."
         fi
