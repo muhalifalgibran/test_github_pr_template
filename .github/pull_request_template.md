@@ -1,4 +1,9 @@
-Please go the the `Preview` tab and select the appropriate sub-template:
+### Required Checklist
 
-* [Group A](&template=feature.md)
-* [Group B](&template=bugfix.md)
+- [ ] Required Task 1
+- [ ] Required Task 2
+
+### Optional Checklist
+
+- [ ] Optional Task 1
+- [ ] Optional Task 2
